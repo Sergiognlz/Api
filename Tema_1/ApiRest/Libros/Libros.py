@@ -5,22 +5,43 @@ from pydantic import BaseModel
 app=FastAPI()
 
 # Definición del modelo Libro
-class Libro(BaseModel):
-    id:int
-    ISBN:str
-    titulo:str
-    num_paginas:int
-    autor_id:int
-   
+from pydantic import BaseModel
 
-# Lista de libros generada
+# Definición del modelo Libro
+class Libro(BaseModel):
+    id: int
+    ISBN: str
+    titulo: str
+    num_paginas: int
+    id_autor: int
+
 lista_libros = [
-    Libro(id=1, ISBN="978-1-23456-001-0", titulo="El llamado de Cthulhu", num_paginas=128, autor_id=1),
-    Libro(id=2, ISBN="978-1-23456-002-7", titulo="El hombre de arena", num_paginas=200, autor_id=2),
-    Libro(id=3, ISBN="978-1-23456-003-4", titulo="El valle del sueño", num_paginas=180, autor_id=3),
-    Libro(id=4, ISBN="978-1-23456-004-1", titulo="Conan el bárbaro", num_paginas=220, autor_id=4),
-    Libro(id=5, ISBN="978-1-23456-005-8", titulo="El demonio de la perversión", num_paginas=150, autor_id=5)
+    # Libros de H.P. Lovecraft (id=1)
+    Libro(id=1, ISBN="978-1-23456-001-0", titulo="La Llamada de Cthulhu", num_paginas=128, autor_id=1),
+    Libro(id=2, ISBN="978-1-23456-002-7", titulo="En las montañas de la locura", num_paginas=200, autor_id=1),
+    Libro(id=3, ISBN="978-1-23456-003-4", titulo="La sombra sobre Innsmouth", num_paginas=150, autor_id=1),
+
+    # Libros de Frank Belknap Long (id=2)
+    Libro(id=4, ISBN="978-1-23456-004-1", titulo="El hombre de arena", num_paginas=180, autor_id=2),
+    Libro(id=5, ISBN="978-1-23456-005-8", titulo="Los dioses de Nehwon", num_paginas=160, autor_id=2),
+    Libro(id=6, ISBN="978-1-23456-006-5", titulo="Los fantasmas de Ulthar", num_paginas=140, autor_id=2),
+
+    # Libros de Clark Ashton Smith (id=3)
+    Libro(id=7, ISBN="978-1-23456-007-2", titulo="El valle del sueño", num_paginas=180, autor_id=3),
+    Libro(id=8, ISBN="978-1-23456-008-9", titulo="La ciudad sin nombre", num_paginas=210, autor_id=3),
+    Libro(id=9, ISBN="978-1-23456-009-6", titulo="El reino de los hechizos", num_paginas=190, autor_id=3),
+
+    # Libros de Robert E. Howard (id=4)
+    Libro(id=10, ISBN="978-1-23456-010-2", titulo="Conan el bárbaro", num_paginas=220, autor_id=4),
+    Libro(id=11, ISBN="978-1-23456-011-9", titulo="La reina de la Costa Negra", num_paginas=200, autor_id=4),
+    Libro(id=12, ISBN="978-1-23456-012-6", titulo="El dios en el cuenco", num_paginas=180, autor_id=4),
+
+    # Libros de Robert Bloch (id=5)
+    Libro(id=13, ISBN="978-1-23456-013-3", titulo="El demonio de la perversión", num_paginas=150, autor_id=5),
+    Libro(id=14, ISBN="978-1-23456-014-0", titulo="Psicosis", num_paginas=210, autor_id=5),
+    Libro(id=15, ISBN="978-1-23456-015-7", titulo="El extraño", num_paginas=170, autor_id=5)
 ]
+
 
 # Endpoint para obtener la lista de libros
 @app.get("/libros")
@@ -39,7 +60,7 @@ def get_libro(id_libro:int):
     return libros[0] if libros else {"error":"Libro no encontrado"}
 
 # Libro por query 
-@app.get("/libro/") 
+@app.get("/libros/") 
 
 def get_libro_query(id_libro:int):
     # Buscar el libro por su ID

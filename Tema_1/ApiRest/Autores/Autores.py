@@ -34,7 +34,7 @@ def get_autor(id_autor:int):
     return autores[0] if autores else {"error":"Autor no encontrado"}
 
 # Autor por query 
-@app.get("/autor/")
+@app.get("/autores/")
 def get_autor_query(id_autor:int):
     autores=[autor for autor in lista_autores if autor.id==id_autor]
 
