@@ -28,9 +28,20 @@ def users():
 @app.get("/users/{id_user}")
 
 def get_user(id_user:int):
+    
+    return search_user(id_user)
+
+
+@app.get("/users/")
+
+def get_user_query(id_user:int):
+  
+
+ 
+    return search_user(id_user)
+
+def search_user(id_user:int):
     users=[user for user in user_list if user.id==id_user]
 
  
     return users[0] if users else {"error":"User not foud"}
-
-
