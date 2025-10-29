@@ -1,8 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 # Crear la aplicación de FastAPI
-app=FastAPI()
+router=APIRouter()
 
 # Definición del modelo Autor
 class Autor(BaseModel):
@@ -22,26 +22,26 @@ lista_autores= [
 ]
 
 # Endpoint para obtener la lista de autores
-@app.get("/autores")
+@router.get("/autores")
 def Autores():
     return lista_autores
 
 # Endpoint para obtener un autor por su ID
-@app.get("/autores/{id_autor}")
+@router.get("/autores/{id_autor}")
 def get_autor(id_autor:int):
     autores=[autor for autor in lista_autores if autor.id==id_autor]
 
     return autores[0] if autores else {"error":"Autor no encontrado"}
 
 # Autor por query 
-@app.get("/autores/")
+@router.get("/autores/")
 def get_autor_query(id_autor:int):
     autores=[autor for autor in lista_autores if autor.id==id_autor]
 
     return autores[0] if autores else {"error":"Autor no encontrado"}
 
 # Endpoint para añadir un nuevo autor
-@app.post("/autores", status_code=201, response_model=Autor)
+@router.post("/autores", status_code=201, response_model=Autor)
 def add_autor(autor:Autor):
     # Asignar un ID al nuevo autor
     autor.id=next_id()
@@ -60,7 +60,7 @@ def next_id():
         return 1
     
 # Endpoint para modificar un autor existente
-@app.put("/autores/{id_autor}", response_model=Autor)
+@router.put("/autores/{id_autor}", response_model=Autor)
 
 def modify_autor(id_autor:int, autor: Autor):
     # Buscar el autor por su ID y modificarlo
@@ -77,7 +77,7 @@ def modify_autor(id_autor:int, autor: Autor):
     raise HTTPException(status_code=404, detail="Autor no encontrado")
 
 # Endpoint para eliminar un autor por su ID
-@app.delete("/autores/{id_autor}", status_code=204)
+@router.delete("/autores/{id_autor}", status_code=204)
 
 def delete_autor(id_autor:int):
     # Buscar el autor por su ID y eliminarlo

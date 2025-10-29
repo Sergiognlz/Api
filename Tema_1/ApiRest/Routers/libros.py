@@ -1,8 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 # Crear la aplicación de FastAPI
-app=FastAPI()
+router=APIRouter()
 
 # Definición del modelo Libro
 from pydantic import BaseModel
@@ -44,14 +44,14 @@ lista_libros = [
 
 
 # Endpoint para obtener la lista de libros
-@app.get("/libros")
+@router.get("/libros")
 
 def Libros():
     # Devolver la lista de libros
     return lista_libros
 
 # Endpoint para obtener un libro por su ID
-@app.get("/libros/{id_libro}")
+@router.get("/libros/{id_libro}")
 
 def get_libro(id_libro:int):
     # Buscar el libro por su ID
@@ -60,7 +60,7 @@ def get_libro(id_libro:int):
     return libros[0] if libros else {"error":"Libro no encontrado"}
 
 # Libro por query 
-@app.get("/libros/") 
+@router.get("/libros/") 
 
 def get_libro_query(id_libro:int):
     # Buscar el libro por su ID
@@ -69,7 +69,7 @@ def get_libro_query(id_libro:int):
     return libros[0] if libros else {"error":"Libro no encontrado"}
 
 # Endpoint para añadir un nuevo libro
-@app.post("/libros", status_code=201, response_model=Libro)
+@router.post("/libros", status_code=201, response_model=Libro)
 
 def add_libro(libro:Libro):
     # Asignar un ID al nuevo libro
@@ -79,7 +79,7 @@ def add_libro(libro:Libro):
     # Devolver el libro añadido
     return libro
 
-@app.put("/libros/{id_libro}", response_model=Libro)
+@router.put("/libros/{id_libro}", response_model=Libro)
 
 def  modify_libro(id_libro:int, libro: Libro):  
     # Buscar el libro por su ID y modificarlo
@@ -97,7 +97,7 @@ def  modify_libro(id_libro:int, libro: Libro):
     raise HTTPException(status_code=404, detail="Libro no encontrado")
 
 # Endpoint para eliminar un libro por su ID
-@app.delete("/libros/{id_libro}", status_code=204)
+@router.delete("/libros/{id_libro}", status_code=204)
 
 def delete_libro(id_libro:int):
     # Buscar el libro por su ID y eliminarlo
