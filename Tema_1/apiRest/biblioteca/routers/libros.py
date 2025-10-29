@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 # Crear la aplicación de FastAPI
-router=APIRouter()
+router=APIRouter(prefix="/libros", tags=["libros"])
 
 # Definición del modelo Libro
 from pydantic import BaseModel
@@ -17,41 +17,41 @@ class Libro(BaseModel):
 
 lista_libros = [
     # Libros y relatos de H.P. Lovecraft (id=1)
-    Libro(id=1, ISBN="978-1-23456-001-0", titulo="La llamada de Cthulhu", num_paginas=128, autor_id=1),
-    Libro(id=2, ISBN="978-1-23456-002-7", titulo="En las montañas de la locura", num_paginas=200, autor_id=1),
-    Libro(id=3, ISBN="978-1-23456-003-4", titulo="La sombra sobre Innsmouth", num_paginas=150, autor_id=1),
+    Libro(id=1, ISBN="978-1-23456-001-0", titulo="La llamada de Cthulhu", num_paginas=128, id_autor=1),
+    Libro(id=2, ISBN="978-1-23456-002-7", titulo="En las montañas de la locura", num_paginas=200, id_autor=1),
+    Libro(id=3, ISBN="978-1-23456-003-4", titulo="La sombra sobre Innsmouth", num_paginas=150, id_autor=1),
 
     # Relatos de Frank Belknap Long (id=2)
-    Libro(id=4, ISBN="978-1-23456-004-1", titulo="Los perros de Tindalos", num_paginas=120, autor_id=2),
-    Libro(id=5, ISBN="978-1-23456-005-8", titulo="Los devoradores del espacio", num_paginas=140, autor_id=2),
-    Libro(id=6, ISBN="978-1-23456-006-5", titulo="El horror de las colinas", num_paginas=160, autor_id=2),
+    Libro(id=4, ISBN="978-1-23456-004-1", titulo="Los perros de Tindalos", num_paginas=120, id_autor=2),
+    Libro(id=5, ISBN="978-1-23456-005-8", titulo="Los devoradores del espacio", num_paginas=140, id_autor=2),
+    Libro(id=6, ISBN="978-1-23456-006-5", titulo="El horror de las colinas", num_paginas=160, id_autor=2),
 
     # Relatos de Clark Ashton Smith (id=3)
-    Libro(id=7, ISBN="978-1-23456-007-2", titulo="La ciudad de la llama cantadora", num_paginas=110, autor_id=3),
-    Libro(id=8, ISBN="978-1-23456-008-9", titulo="El oscuro Eidolon", num_paginas=130, autor_id=3),
-    Libro(id=9, ISBN="978-1-23456-009-6", titulo="Las criptas de Yoh-Vombis", num_paginas=150, autor_id=3),
+    Libro(id=7, ISBN="978-1-23456-007-2", titulo="La ciudad de la llama cantadora", num_paginas=110, id_autor=3),
+    Libro(id=8, ISBN="978-1-23456-008-9", titulo="El oscuro Eidolon", num_paginas=130, id_autor=3),
+    Libro(id=9, ISBN="978-1-23456-009-6", titulo="Las criptas de Yoh-Vombis", num_paginas=150, id_autor=3),
 
     # Libros y relatos de Robert E. Howard (id=4)
-    Libro(id=10, ISBN="978-1-23456-010-2", titulo="Conan el Bárbaro", num_paginas=220, autor_id=4),
-    Libro(id=11, ISBN="978-1-23456-011-9", titulo="La reina de la Costa Negra", num_paginas=200, autor_id=4),
-    Libro(id=12, ISBN="978-1-23456-012-6", titulo="El dios en el cuenco", num_paginas=180, autor_id=4),
+    Libro(id=10, ISBN="978-1-23456-010-2", titulo="Conan el Bárbaro", num_paginas=220, id_autor=4),
+    Libro(id=11, ISBN="978-1-23456-011-9", titulo="La reina de la Costa Negra", num_paginas=200, id_autor=4),
+    Libro(id=12, ISBN="978-1-23456-012-6", titulo="El dios en el cuenco", num_paginas=180, id_autor=4),
 
     # Libros y relatos de Robert Bloch (id=5)
-    Libro(id=13, ISBN="978-1-23456-013-3", titulo="Psicosis", num_paginas=210, autor_id=5),
-    Libro(id=14, ISBN="978-1-23456-014-0", titulo="El vampiro estelar", num_paginas=120, autor_id=5),
-    Libro(id=15, ISBN="978-1-23456-015-7", titulo="El aprendiz de brujo", num_paginas=140, autor_id=5)
+    Libro(id=13, ISBN="978-1-23456-013-3", titulo="Psicosis", num_paginas=210, id_autor=5),
+    Libro(id=14, ISBN="978-1-23456-014-0", titulo="El vampiro estelar", num_paginas=120, id_autor=5),
+    Libro(id=15, ISBN="978-1-23456-015-7", titulo="El aprendiz de brujo", num_paginas=140, id_autor=5)
 ]
 
 
 # Endpoint para obtener la lista de libros
-@router.get("/libros")
+@router.get("/")
 
 def Libros():
     # Devolver la lista de libros
     return lista_libros
 
 # Endpoint para obtener un libro por su ID
-@router.get("/libros/{id_libro}")
+@router.get("/{id_libro}")
 
 def get_libro(id_libro:int):
     # Buscar el libro por su ID
@@ -60,7 +60,7 @@ def get_libro(id_libro:int):
     return libros[0] if libros else {"error":"Libro no encontrado"}
 
 # Libro por query 
-@router.get("/libros/") 
+@router.get("/query") 
 
 def get_libro_query(id_libro:int):
     # Buscar el libro por su ID
@@ -69,7 +69,7 @@ def get_libro_query(id_libro:int):
     return libros[0] if libros else {"error":"Libro no encontrado"}
 
 # Endpoint para añadir un nuevo libro
-@router.post("/libros", status_code=201, response_model=Libro)
+@router.post("/", status_code=201, response_model=Libro)
 
 def add_libro(libro:Libro):
     # Asignar un ID al nuevo libro
@@ -79,7 +79,7 @@ def add_libro(libro:Libro):
     # Devolver el libro añadido
     return libro
 
-@router.put("/libros/{id_libro}", response_model=Libro)
+@router.put("/{id_libro}", response_model=Libro)
 
 def  modify_libro(id_libro:int, libro: Libro):  
     # Buscar el libro por su ID y modificarlo
@@ -97,7 +97,7 @@ def  modify_libro(id_libro:int, libro: Libro):
     raise HTTPException(status_code=404, detail="Libro no encontrado")
 
 # Endpoint para eliminar un libro por su ID
-@router.delete("/libros/{id_libro}", status_code=204)
+@router.delete("/{id_libro}", status_code=204)
 
 def delete_libro(id_libro:int):
     # Buscar el libro por su ID y eliminarlo
