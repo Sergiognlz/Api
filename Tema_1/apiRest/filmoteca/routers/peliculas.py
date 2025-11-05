@@ -51,7 +51,6 @@ def get_pelicula(id_pelicula:int):
 
 # Pelicula por query 
 @router.get("/")
-
 def get_pelicula_query(id_pelicula:int):
     peliculas=[pelicula for pelicula in lista_peliculas if pelicula.id==id_pelicula]
 
@@ -60,7 +59,6 @@ def get_pelicula_query(id_pelicula:int):
 
 # Endpoint para añadir un nuevo libro
 @router.post("/", status_code=201, response_model=Pelicula)
-
 # Añadir una nueva pelicula
 def add_pelicula(pelicula:Pelicula):
     # Asignar un ID al nuevo libro

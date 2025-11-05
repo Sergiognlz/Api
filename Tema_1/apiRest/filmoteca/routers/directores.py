@@ -26,19 +26,20 @@ def Directores():
     return lista_directores
 
 # Endpoint para obtener un autor por su ID
-@router.get("/{id_director}")
-def get_director(id_director:int):
-    directores=[director for director in lista_directores if director.id==id_director]
+@router.get("/{id}")
+def get_director(id:int):
+    directores=[director for director in lista_directores if director.id==id]
 
     return directores[0] if directores else {"error":"Director no encontrado"}
    
 
 # Director por query 
-@router.get("/")
-def get_director_query(id_director:int):
-    directores=[director for director in lista_directores if director.id==id_director]
+@router.get("")
+def get_director_query(id:int):
+    directores=[director for director in lista_directores if director.id==id]
 
     return directores[0] if directores else {"error":"Director no encontrado"}
+
 
 # Endpoint para añadir un nuevo director
 @router.post("/", status_code=201, response_model=Director)
@@ -61,15 +62,15 @@ def next_id():
     
 
 # Endpoint para modificar un director por su ID    
-@router.put("/{id_director}", response_model=Director)
+@router.put("/{id}", response_model=Director)
 
-def modify_director(id_director:int, director: Director):   
+def modify_director(id:int, director: Director):   
     # Buscar el director por su ID y modificarlo
     for index, saved_director in enumerate(lista_directores):
         # Si se encuentra el director, se actualiza la información
-        if saved_director.id==id_director:
+        if saved_director.id==id:
             # Actualizar los datos del director
-            director.id=id_director
+            director.id=id
             # Reemplazar el director en la lista
             lista_directores[index]=director
             # Devolver el director modificado
@@ -79,14 +80,12 @@ def modify_director(id_director:int, director: Director):
     raise HTTPException(status_code=404, detail="Director no encontrado")
 
 # Endpoint para eliminar un director por su ID
-@router.delete("/{id_director}", status_code=204)
-
-
-def delete_director(id_director:int):
+@router.delete("/{id}", status_code=204)
+def delete_director(id:int):
     # Buscar el director por su ID y eliminarlo
     for saved_director in lista_directores:
         # Si se encuentra el director, se elimina de la lista
-        if saved_director.id==id_director:
+        if saved_director.id==id:
             lista_directores.remove(saved_director)
             return{}
         

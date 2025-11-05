@@ -45,14 +45,12 @@ lista_libros = [
 
 # Endpoint para obtener la lista de libros
 @router.get("/")
-
-def Libros():
+def libros():
     # Devolver la lista de libros
     return lista_libros
 
 # Endpoint para obtener un libro por su ID
 @router.get("/{id_libro}")
-
 def get_libro(id_libro:int):
     # Buscar el libro por su ID
     libros=[libro for libro in lista_libros if libro.id==id_libro]
@@ -70,7 +68,6 @@ def get_libro_query(id_libro:int):
 
 # Endpoint para añadir un nuevo libro
 @router.post("/", status_code=201, response_model=Libro)
-
 def add_libro(libro:Libro):
     # Asignar un ID al nuevo libro
     libro.id=next_id()
@@ -80,7 +77,6 @@ def add_libro(libro:Libro):
     return libro
 
 @router.put("/{id_libro}", response_model=Libro)
-
 def  modify_libro(id_libro:int, libro: Libro):  
     # Buscar el libro por su ID y modificarlo
     for index, saved_libro in enumerate(lista_libros):
@@ -98,7 +94,6 @@ def  modify_libro(id_libro:int, libro: Libro):
 
 # Endpoint para eliminar un libro por su ID
 @router.delete("/{id_libro}", status_code=204)
-
 def delete_libro(id_libro:int):
     # Buscar el libro por su ID y eliminarlo
     for saved_libro in lista_libros:
