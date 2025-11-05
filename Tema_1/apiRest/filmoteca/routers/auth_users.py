@@ -20,7 +20,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 SECRET_KEY = "fce69a0a1b430771903083e7c4c647b51aad3f9e3b60255cce7a4c712289bf6d"
 
 # Objeto que usaremos para el hash de  la contraseña
-password_hash = PasswordHash().recommended
+password_hash = PasswordHash.recommended()
 
 
 
@@ -52,9 +52,21 @@ users_db = {
     "email": "@example2.com",
     "disabled": True,
     "password": "secret2"   
-    }
+    },
+
+"johnsmith": {   
+    "username": "johnsmith",
+    "full_name": "John Smith",
+    "email": "@example3.com",
+    "disabled": True,
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$oehF+fUexmap0ORUbLEYnQ$Tzgwon1w4Z+sxf5+M5rFFClqCIhhcKlWkuMd0YlynQY"
+}
+    
 }
 
+
+
+# Endpoint para el registro de nuevos usuarios
 @router.post("/register", status_code=201)
 def register(user: UserDB):
     if user.username not in users_db:
@@ -63,7 +75,10 @@ def register(user: UserDB):
         user.password = hashed_password
         users_db[user.username] = user
 
+        return user
+
     else:
         raise HTTPException(status_code=409, detail="El usuario ya existe")
 
-   
+   # Endpoint para el login de usuarios y generación de tokens JWT
+#@router.post("/login")
