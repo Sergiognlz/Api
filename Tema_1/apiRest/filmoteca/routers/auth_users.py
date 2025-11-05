@@ -4,13 +4,10 @@ import jwt
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash 
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 # Configuración del router
-router = APIRouter(
-    prefix="/users",         # prefijo de ruta para todos los endpoints
-    tags=["Users"]           # etiqueta para documentación
-)
+router = APIRouter()
 
 # Configuración de OAuth2
 oauth2 = OAuth2PasswordBearer(tokenUrl="login")
@@ -55,7 +52,18 @@ users_db = {
     "email": "@example2.com",
     "disabled": True,
     "password": "secret2"   
+    }
 }
 
+@router.post("/register", status_code=201)
+def register(user: UserDB):
+    if user.username not in users_db:
+    
+        hashed_password = password_hash.hash(user.password)
+        user.password = hashed_password
+        users_db[user.username] = user
 
-}
+    else:
+        raise HTTPException(status_code=409, detail="El usuario ya existe")
+
+   
