@@ -1,9 +1,8 @@
-
-import datetime
+from datetime import *
 from pydantic import BaseModel
 import jwt
 from jwt.exceptions import InvalidTokenError
-from pwdlib import PasswordHash 
+from pwdlib import PasswordHash
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -59,11 +58,19 @@ users_db = {
     "username": "johnsmith",
     "full_name": "John Smith",
     "email": "@example3.com",
-    "disabled": True,
+    "disabled": False,
     "password": "$argon2id$v=19$m=65536,t=3,p=4$oehF+fUexmap0ORUbLEYnQ$Tzgwon1w4Z+sxf5+M5rFFClqCIhhcKlWkuMd0YlynQY"
+},
+
+"juanluis": {
+    "username": "juanluis",
+    "full_name": "Juan Lúis",
+    "email": "@example3.com",
+    "disabled": False,
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$TEgH6kpSHqXwZwHBfZAVkA$m4pmlFXbtewB3SMRhm0Q9m5GvnTn7hufO0eboHTWUSU"
 }
-    
 }
+
 
 
 
@@ -77,7 +84,7 @@ def register(user: UserDB):
         # Almacenar el nuevo usuario en la "base de datos"
         user.password = hashed_password
         # Agregar el usuario al diccionario de usuarios
-        users_db[user.username] = user
+        users_db[user.username] = user.model_dump()
         # Devolver el usuario registrado (sin la contraseña)
         return user
 
@@ -88,19 +95,43 @@ def register(user: UserDB):
 @router.post("/login")
 async def login(form: OAuth2PasswordRequestForm = Depends()):
     # Verificar si el usuario existe
-    username= users_db.get(form.username)
+    user= users_db.get(form.username)
 
-    if username in users_db:
-        # Obtener el usuario de la "base de datos"
-        if password_hash.verify(form.password, users_db[form.username]["password"]):
-            # Crear el token JWT
-            expire= datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-            access_token= {"sub":username, "exp": expire}
-            # Generar el token
-            token= jwt.encode(access_token, SECRET_KEY, algorithm=ALGORITHM)
+    if user:
+
+        user=UserDB(**user)
+        try:
+            # Obtener el usuario de la "base de datos"
+            if password_hash.verify(form.password, user.password):
+                # Crear el token JWT
+                expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+                access_token= {"sub":user.username, "exp": expire}
+                # Generar el token
+                token= jwt.encode(access_token, SECRET_KEY, algorithm=ALGORITHM)
             # Devolver el token
             return {"access_token": token, "token_type": "bearer"}
-        
-
+        except: 
+            raise HTTPException(status_code=400, detail="Error en la autentificación")
+    
     # Si el usuario no existe o la contraseña es incorrecta    
     raise HTTPException(status_code=401, detail="El usuario o la contraseña son incorrectos")
+
+
+async def authentication (token: str = Depends(oauth2)):
+    # Verificar y decodificar el token JWT
+    try:
+        
+        username= jwt.decode(token, SECRET_KEY, algorithm=ALGORITHM).get("sub")
+        if username is None:
+            raise HTTPException(status_code=401, detail="Credenciales de autentificación inválidas", headers={"WWW-Authenticate": "Bearer"})
+        
+    # Obtener el usuario de la "base de datos"
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Credenciales de autentificación inválidas", headers={"WWW-Authenticate": "Bearer"})
+    # Crear el objeto User
+    user= User(**users_db[username])
+   # Verificar si el usuario está activo 
+    if user.disabled:
+        raise HTTPException(status_code=400, detail="Usuario inactivo")
+    # Devolver el usuario autenticado
+    return user
